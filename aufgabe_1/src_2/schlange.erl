@@ -6,18 +6,21 @@
 %%% @end
 %%% Created : 29. Okt 2014 08:32
 %%%-------------------------------------------------------------------
--module(queue).
+-module(schlange).
 -author("tim_hagemann").
 
 %% API
 -export([create/0, dequeue/1, enqueue/2, first/1, transfer/1]).
 
+% Erstellt eine leere Queue.
 create() ->
   {stack:create(), stack:create()}.
 
+% Fuegt das Element an das Ende der Queue an.
 enqueue({INSTACK, OUTSTACK}, ELEM) ->
   {stack:push(INSTACK, ELEM), OUTSTACK}.
 
+% Loescht das erste Element aus der Queue.
 dequeue({INSTACK, OUTSTACK}) ->
   OUTEMPTY = stack:empty(OUTSTACK),
   INEMPTY = stack:empty(INSTACK),
@@ -25,6 +28,8 @@ dequeue({INSTACK, OUTSTACK}) ->
     OUTEMPTY ->
       if
         INEMPTY ->
+          io:write('in empty'),
+          io:write({INSTACK, OUTSTACK}),
           {INSTACK, OUTSTACK};
         true ->
           {RES_IN, RES_OUT} = transfer({INSTACK, OUTSTACK}),
@@ -34,6 +39,7 @@ dequeue({INSTACK, OUTSTACK}) ->
       {INSTACK, stack:pop(OUTSTACK)}
   end.
 
+% Gibt das erste Element aus der Queue zurueck.
 first({INSTACK, OUTSTACK}) ->
   OUTEMPTY = stack:empty(OUTSTACK),
   INEMPTY = stack:empty(INSTACK),
@@ -58,5 +64,5 @@ transfer({INSTACK, OUTSTACK}) ->
     true ->
       NEW_OUT = stack:push(OUTSTACK, stack:top(INSTACK)),
       NEW_IN = stack:pop(INSTACK),
-      {NEW_IN, NEW_OUT}
+      transfer({NEW_IN, NEW_OUT})
   end.
