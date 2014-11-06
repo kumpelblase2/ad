@@ -16,9 +16,9 @@
 create() ->
   {stack:create(), stack:create()}.
 
-% Fuegt das Element an das Ende der Queue an.
+% Fuegt ein Element an das Ende der Queue an und gibt sie zurueck.
 enqueue({INSTACK, OUTSTACK}, ELEM) ->
-  {stack:push(INSTACK, ELEM), OUTSTACK}.
+  {stack:push(INSTACK, ELEM), OUTSTACK}.      % Element auf dem INSTACK ablegen
 
 % Loescht das erste Element aus der Queue.
 dequeue({INSTACK, OUTSTACK}) ->
@@ -27,13 +27,11 @@ dequeue({INSTACK, OUTSTACK}) ->
   if
     OUTEMPTY ->
       if
-        INEMPTY ->
-          io:write('in empty'),
-          io:write({INSTACK, OUTSTACK}),
-          {INSTACK, OUTSTACK};
-        true ->
-          {RES_IN, RES_OUT} = transfer({INSTACK, OUTSTACK}),
-          dequeue({RES_IN, RES_OUT})
+        INEMPTY ->                                            % OUTSTACK und INSTACK sind leer
+          {INSTACK, OUTSTACK};                                % Queue ist leer => Queue zurückgeben, wie erhalten.
+        true ->                                               % OUTSTACK ist leer und INSTACK ist -nicht- leer
+          {RES_IN, RES_OUT} = transfer({INSTACK, OUTSTACK}),  % => INSTACK umschichten
+          dequeue({RES_IN, RES_OUT})                          % rek. Aufruf.
       end;
     true ->
       {INSTACK, stack:pop(OUTSTACK)}
@@ -46,23 +44,24 @@ first({INSTACK, OUTSTACK}) ->
   if
     OUTEMPTY ->
       if
-        INEMPTY ->
-          ok;
-        true ->
-          {_, RES_OUT} = transfer({INSTACK, OUTSTACK}),
-          stack:top(RES_OUT)
+        INEMPTY ->                                      % OUTSTACK und INSTACK sind leer
+          null;                                         % => Queue ist leer: Null-Element zurueckgeben
+        true ->                                         % Keine Elemente im OUTSTACK, aber im INSTACK enthalten
+          {_, RES_OUT} = transfer({INSTACK, OUTSTACK}), % => INSTACK umschichten
+          stack:top(RES_OUT)                            % und oberstes Element des OUTSTACKs zurueckgeben
       end;
-    true ->
-      stack:top(OUTSTACK)
+    true ->                                             % Elemente im OUTSTACK enthalten
+      stack:top(OUTSTACK)                               % Oberstes Element des OUTSTACKs zurueckgeben
   end.
 
+% Schichtet alle Elemente des INSTACKs in den OUTSTACK um
 transfer({INSTACK, OUTSTACK}) ->
   INEMPTY = stack:empty(INSTACK),
   if
-    INEMPTY ->
-      {INSTACK, OUTSTACK};
+    INEMPTY ->                                            % Falls keine Elemente im INSTACK zum umschichten
+      {INSTACK, OUTSTACK};                                % Queue zurueckgeben, wie erhalten.
     true ->
-      NEW_OUT = stack:push(OUTSTACK, stack:top(INSTACK)),
-      NEW_IN = stack:pop(INSTACK),
+      NEW_OUT = stack:push(OUTSTACK, stack:top(INSTACK)), % Oberstes Elem vom INSTACK auf den OUTSTACK legen
+      NEW_IN = stack:pop(INSTACK),                        % und vom INSTACK loeschen
       transfer({NEW_IN, NEW_OUT})
   end.
