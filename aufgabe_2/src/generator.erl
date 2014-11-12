@@ -10,4 +10,7 @@
 -author("tim_hagemann").
 
 %% API
--export([]).
+-export([sortNum/2]).
+
+sortNum(LENGTH, MODE) ->
+  ok.

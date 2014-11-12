@@ -10,4 +10,7 @@
 -author("tim_hagemann").
 
 %% API
--export([]).
+-export([startMessung/1]).
+% Type = { all, insertion, selection }
+startMessung(TYPE) ->
+  ok.

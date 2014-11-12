@@ -10,4 +10,6 @@
 -author("tim_hagemann").
 
 %% API
--export([]).
+-export([insertionS/3]).
+insertionS(ARRAY, START, END) ->
+  ok.

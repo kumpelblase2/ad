@@ -10,4 +10,6 @@
 -author("tim_hagemann").
 
 %% API
--export([]).
+-export([selectionS/3]).
+selectionS(ARRAY, START, END) ->
+  ok.
