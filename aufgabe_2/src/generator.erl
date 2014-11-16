@@ -18,13 +18,13 @@ sortNum(LENGTH, MODE) when LENGTH > 0 ->
 
 % Abbruchbedingung
 sortNum(_, _, 0, ACCU) ->
-  ACCU.
+  ACCU;
 
 sortNum(LENGTH, random, REMAINING, ACCU) ->
-  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), random:uniform(LENGTH))).
+  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), random:uniform(LENGTH)));
 
 sortNum(LENGTH, ascending, REMAINING, ACCU) ->
-  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), LENGTH - REMAINING)).
+  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), LENGTH - REMAINING));
 
 sortNum(LENGTH, descending, REMAINING, ACCU) ->
   sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), REMAINING)).
