@@ -24,10 +24,10 @@ sortNum(LENGTH, random, REMAINING, ACCU) ->
   sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), random:uniform(LENGTH)));
 
 sortNum(LENGTH, ascending, REMAINING, ACCU) ->
-  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), LENGTH - REMAINING));
+  sortNum(LENGTH, ascending, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), LENGTH - REMAINING));
 
 sortNum(LENGTH, descending, REMAINING, ACCU) ->
-  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), REMAINING)).
+  sortNum(LENGTH, descending, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), REMAINING)).
 
 % Ein Versuch, die Methode, welche Art von Nummer generiert wird, zu refaktorisieren, abhängig von MODE --> getNum()
 % Bis auf die Zahl, die als nächstes eingefügen werden soll, ist der Code der gleiche.
