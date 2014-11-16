@@ -12,6 +12,7 @@
 %% API
 -export([sortNum/2]).
 
+
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
   sortNum(LENGTH, MODE, LENGTH, liste:create()).
 
@@ -40,4 +41,4 @@ sortNum(LENGTH, descending, REMAINING, ACCU) ->
 %  LENGTH - REMAINING.
 %
 %genNum(descending, LENGTH, REMAINING) ->
-%  REMAINING. 
+%  REMAINING.
