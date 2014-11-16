@@ -1,19 +1,16 @@
 %%%-------------------------------------------------------------------
-%%% @author tim_hagemann
-%%% @copyright (C) 2014, <COMPANY>
+%%% @author tim_hartig
+%%% @copyright (C) 2014, HAW
 %%% @doc
 %%%
 %%% @end
 %%% Created : 12. Nov 2014 10:52
 %%%-------------------------------------------------------------------
 -module(selections).
--author("tim_hagemann").
+-author("tim_hartig").
 
 %% API
 -export([selectionS/3]).
-selectionS(ARRAY, START, END) when START > END ->
-  ARRAY;
-
 selectionS(ARRAY, START, END) ->
   SMALLEST_INDEX = findSmallest(ARRAY, START, END),
   selectionS(switch(ARRAY, START, SMALLEST_INDEX), START + 1, END).
