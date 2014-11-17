@@ -23,7 +23,7 @@ setA(LIST, POS, ELEM) ->
   LIST_LENGTH = liste:laenge(LIST),
   if
     LIST_LENGTH < LISTPOS ->
-      setA(liste:insert(LIST, liste:laenge(LIST), undefined), POS, ELEM);
+      setA(liste:insert(LIST, liste:laenge(LIST) + 1, undefined), POS, ELEM);
     true ->
       TempList = liste:delete(LIST, LISTPOS),
       liste:insert(TempList, LISTPOS, ELEM)
