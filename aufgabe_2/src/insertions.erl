@@ -16,6 +16,7 @@ insertionS(ARRAY, START, END) ->
   insertionS({ ARRAY, 0, 0 }, START, END, 1).
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, _START, END, CURRENT) when CURRENT > END ->
+  generator:saveList(ARRAY),
   { ARRAY, { SWAPS, COMPARISON }};
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, START, END, CURRENT) ->
