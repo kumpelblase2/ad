@@ -70,7 +70,7 @@ execute(insertion, ARR) ->
 
 execute(selection, ARR) ->
   {_, _, MicroSecsStart} = now(),
-  {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR)),
+  {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR)-1),
   {_, _, MicroSecsEnd} = now(),
   RESULT_TIME = MicroSecsEnd - MicroSecsStart,
   {RESULT_TIME, SWAPS, COMPARISONS}.
