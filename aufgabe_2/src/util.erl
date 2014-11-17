@@ -28,7 +28,7 @@ zahlenfolgeR(Name) ->
 zahlenfolgeRT(Name) ->
 	{Val,BList} = file:read_file(Name),
 	case Val of
-		ok -> binary_to_list(BList);
+		ok -> stringList_to_list(binary_to_list(BList));
 		error -> io:format("Error reading ~p: ~p!\r\n",[Name,BList]),
 				[]
 	end.
@@ -36,6 +36,21 @@ zahlenfolgeRT(Name) ->
 randomliste(Num,Min,Max) ->
 	RangeInt = Max-Min,
 	lists:flatten([random:uniform(RangeInt+1) + Min-1 || _ <- lists:seq(1, Num)]).
+
+stringList_to_list(StringList) ->
+	{ok,Tokens,_} = erl_scan:string(StringList),
+	parse_list(Tokens).
+	
+parse_list([{integer,_Eins,Number}|Tail]) ->
+	[Number|parse_list(Tail)];
+parse_list([{']',_Eins}|Tail]) ->
+	case Tail of
+		[] -> [];
+		_True -> io:format("Error parsing: ~p!\r\n",[Tail]),
+				[]
+	end;
+parse_list([_Head|Tail]) ->
+	parse_list(Tail).
 
 	
 sortliste(Num) ->
