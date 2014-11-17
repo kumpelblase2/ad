@@ -10,12 +10,15 @@
 -author("tim_hartig").
 
 %% API
--export([sortNum/2, readList/0, listToArray/1]).
+-export([sortNum/2, readList/0, readList/1, listToArray/1]).
 
 %% Generiert eine Zahlenfolge als Liste mit der Länge LENGTH, nach dem Schema MODE.
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
+  sortNum(LENGTH, MODE, "zahlen.dat").
+
+sortNum(LENGTH, MODE, FILENAME) when LENGTH > 0 ->
   Result = sortNum(LENGTH, MODE, LENGTH, []),
-  case file:write_file("zahlen.dat", io_lib:fwrite("~p", [Result])) of
+  case file:write_file(FILENAME, io_lib:fwrite("~p", [Result])) of
     ok -> ok;
     {error, Reason} -> {error,Reason}
   end.
@@ -57,23 +60,22 @@ readList() ->
   readList("zahlen.dat").
 
 readList(FileName) ->
-  util:zahlenfolgeRT(FileName).
+  listToArray(util:zahlenfolgeRT(FileName)).
 
 
 
-%% Konvertiert eine Erlang-Liste in ein rekursiv geschachteltes Tupel --> ADT Array
+%% Konvertiert eine Erlang-Liste in ein rekursiv geschachteltes Tupel
 listToArray(List) ->
   if
     is_list(List) ->
-      listToArray(List, array:create());
-  true ->
-    {error, not_a_list}
+      listToArray(List, liste:create());
+    true ->
+      {error, not_a_list}
   end.
 
 listToArray([H|T], Accu) ->
-  array:setA(Accu, array:laenge(Accu), H),
-  listToArray(T, Accu);
+  NewAccu = liste:insert(Accu, liste:laenge(Accu)+1, H),
+  listToArray(T, NewAccu);
 
-listToArray([], _Accu) ->
-  {}.
-
+listToArray([], Accu) ->
+  Accu.
