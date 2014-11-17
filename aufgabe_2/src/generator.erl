@@ -10,35 +10,70 @@
 -author("tim_hartig").
 
 %% API
--export([sortNum/2]).
+-export([sortNum/2, readList/0, listToArray/1]).
 
-
+%% Generiert eine Zahlenfolge als Liste mit der Länge LENGTH, nach dem Schema MODE.
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
-  sortNum(LENGTH, MODE, LENGTH, liste:create()).
+  Result = sortNum(LENGTH, MODE, LENGTH, []),
+  case file:write_file("zahlen.dat", io_lib:fwrite("~p", [Result])) of
+    ok -> ok;
+    {error, Reason} -> {error,Reason}
+  end.
 
-% Abbruchbedingung
+
+
+%% Abbruchbedingung
 sortNum(_, _, 0, ACCU) ->
   ACCU;
 
+%% Generiert eine zufällige Zahlenfolge.
 sortNum(LENGTH, random, REMAINING, ACCU) ->
-  sortNum(LENGTH, random, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), random:uniform(LENGTH)));
+  sortNum(LENGTH, random, REMAINING - 1, lists:append([ACCU, [random:uniform(LENGTH)]]));
 
+%% Generiert eine zufällige Zahlenfolge ohne doppelte Vorkommen von Zahlen.
+sortNum(LENGTH, random_nodup, REMAINING, ACCU) ->
+  RANDOM = random:uniform(LENGTH),
+  IS_MEMBER = lists:member(RANDOM, ACCU),
+
+  if %% Prüfung, ob Element bereits in der Liste enthalten
+    IS_MEMBER ->
+      sortNum(LENGTH, random_nodup, REMAINING, ACCU);
+    true ->
+      sortNum(LENGTH, random_nodup, REMAINING - 1, lists:append([ACCU, [RANDOM]]))
+  end;
+
+%% Generiert eine aufsteigend sortierte Zahlenfolge.
 sortNum(LENGTH, ascending, REMAINING, ACCU) ->
-  sortNum(LENGTH, ascending, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), LENGTH - REMAINING));
+  sortNum(LENGTH, ascending, REMAINING - 1, lists:append([ACCU, [LENGTH - REMAINING]]));
 
+%% Generiert eine absteigend sortierte Zahlenfolge.
 sortNum(LENGTH, descending, REMAINING, ACCU) ->
-  sortNum(LENGTH, descending, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), REMAINING)).
+  sortNum(LENGTH, descending, REMAINING - 1, lists:append([ACCU, [REMAINING]])).
 
-% Ein Versuch, die Methode, welche Art von Nummer generiert wird, zu refaktorisieren, abhängig von MODE --> getNum()
-% Bis auf die Zahl, die als nächstes eingefügen werden soll, ist der Code der gleiche.
-%sortNum(LENGTH, MODE, REMAINING, ACCU, NUMBER) ->
-%  sortNum(LENGTH, MODE, REMAINING - 1, liste:insert(ACCU, liste:laenge(ACCU), NUMBER), getNum(MODE, LENGTH, REMAINING)).
-%
-%genNum(random, LENGTH, _) ->
-%  randon:uniform(LENGTH).
-%
-%genNum(ascending, LENGTH, REMAINING) ->
-%  LENGTH - REMAINING.
-%
-%genNum(descending, LENGTH, REMAINING) ->
-%  REMAINING.
+
+
+%% Liest die Zahlenfolge aus der angegebenen Datei ein
+readList() ->
+  readList("zahlen.dat").
+
+readList(FileName) ->
+  util:zahlenfolgeRT(FileName).
+
+
+
+%% Konvertiert eine Erlang-Liste in ein rekursiv geschachteltes Tupel --> ADT Array
+listToArray(List) ->
+  if
+    is_list(List) ->
+      listToArray(List, array:create());
+  true ->
+    {error, not_a_list}
+  end.
+
+listToArray([H|T], Accu) ->
+  array:setA(Accu, array:laenge(Accu), H),
+  listToArray(T, Accu);
+
+listToArray([], _Accu) ->
+  {}.
+
