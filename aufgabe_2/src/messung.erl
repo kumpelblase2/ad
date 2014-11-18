@@ -48,13 +48,16 @@ doMessung(TYPE, RUNS, SIZE) ->
 
 doMessung(TYPE, RUNS, SIZE, TEMP) ->
   if RUNS > 20 ->
-      GEN = generator:sortNum(SIZE, random),
+      generator:sortNum(SIZE, random),
+      GEN = generator:readList(),
       doMessung(TYPE, RUNS - 1, SIZE, TEMP ++ [execute(TYPE, GEN)]);
     RUNS > 10 ->
-      GEN = generator:sortNum(SIZE, ascending),
+      generator:sortNum(SIZE, ascending),
+      GEN = generator:readList(),
       doMessung(TYPE, RUNS - 1, SIZE, TEMP ++ [execute(TYPE, GEN)]);
     RUNS > 0 ->
-      GEN = generator:sortNum(SIZE, descending),
+      generator:sortNum(SIZE, descending),
+      GEN = generator:readList(),
       doMessung(TYPE, RUNS - 1, SIZE, TEMP ++ [execute(TYPE, GEN)]);
     true ->
       {AVG_TIME, AVG_SWAPS, AVG_COMPARE} = calc_average(TEMP),
@@ -63,14 +66,14 @@ doMessung(TYPE, RUNS, SIZE, TEMP) ->
 
 execute(insertion, ARR) ->
   {_, _, MicroSecsStart} = now(),
-  {_, { SWAPS, COMPARISONS }} = insertions:insertionS(ARR, 0, array:laenge(ARR)),
+  {_, { SWAPS, COMPARISONS }} = insertions:insertionS(ARR, 0, array:laenge(ARR) - 1),
   {_, _, MicroSecsEnd} = now(),
   RESULT_TIME = MicroSecsEnd - MicroSecsStart,
   {RESULT_TIME, SWAPS, COMPARISONS};
 
 execute(selection, ARR) ->
   {_, _, MicroSecsStart} = now(),
-  {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR)),
+  {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR) - 1),
   {_, _, MicroSecsEnd} = now(),
   RESULT_TIME = MicroSecsEnd - MicroSecsStart,
   {RESULT_TIME, SWAPS, COMPARISONS}.
