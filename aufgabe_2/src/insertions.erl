@@ -23,13 +23,8 @@ insertionS({ ARRAY, SWAPS, COMPARISON }, _START, END, CURRENT) when CURRENT > EN
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, START, END, CURRENT) ->
   CURR_ELEM = array:getA(ARRAY, CURRENT),
-  io:write(ARRAY),
-  io:nl(),
   { INSERT_POS, COMPARES } = findInsert(ARRAY, START, CURRENT - 1, CURR_ELEM),
   { TEMP, SWAP } = insertAt(ARRAY, INSERT_POS, CURRENT),
-  io:write(TEMP),
-  io:nl(),
-  io:nl(),
   insertionS({ TEMP, SWAPS + SWAP, COMPARES + COMPARISON }, START, END, CURRENT + 1).
 
 findInsert(ARRAY, START, END, ELEM) when START > END ->
