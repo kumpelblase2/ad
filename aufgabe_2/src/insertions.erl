@@ -54,7 +54,6 @@ findInsert(ARRAY, START, END, ELEM) ->
 
 insertAt(ARRAY, POS, CURRENT_POS) when POS == CURRENT_POS ->
   SWAPS = util:countread(swap),
-  util:countreset(swap),
   { ARRAY, SWAPS };
 
 insertAt(ARRAY, POS, CURRENT_POS) ->
