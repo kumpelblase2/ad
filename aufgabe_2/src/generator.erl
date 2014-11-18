@@ -10,7 +10,7 @@
 -author("tim_hartig").
 
 %% API
--export([sortNum/2, readList/0, readList/1, listToArray/1]).
+-export([sortNum/2, sortNum/3, readList/0, saveList/1]).
 
 %% Generiert eine Zahlenfolge als Liste mit der Länge LENGTH, nach dem Schema MODE.
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
@@ -33,6 +33,7 @@ sortNum(_, _, 0, ACCU) ->
 sortNum(LENGTH, random, REMAINING, ACCU) ->
   sortNum(LENGTH, random, REMAINING - 1, lists:append([ACCU, [random:uniform(LENGTH)]]));
 
+%% EXTRA
 %% Generiert eine zufällige Zahlenfolge ohne doppelte Vorkommen von Zahlen.
 sortNum(LENGTH, random_nodup, REMAINING, ACCU) ->
   RANDOM = random:uniform(LENGTH),
@@ -55,6 +56,27 @@ sortNum(LENGTH, descending, REMAINING, ACCU) ->
 
 
 
+%%% HILFSFUNKTIONEN %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Schreibt das Ergebnis-Array in eine Datei
+saveList(ARRAY) ->
+  saveList(ARRAY, "sortiert.dat").
+
+saveList(ARRAY, FILENAME) ->
+  ResultList = arrayToList(ARRAY),
+  file:write_file(FILENAME, io_lib:format("~p",[ResultList])).
+
+%% Konvertiert ein rekursiv geschachteltes Tupel zu einer Erlang-Liste
+arrayToList(ARRAY) ->
+  lists:reverse(arrayToList(ARRAY, [])).
+
+arrayToList({}, ACCU) ->
+  ACCU;
+
+arrayToList({HEAD, TAIL}, ACCU) ->
+  arrayToList(TAIL, [HEAD] ++ ACCU).
+
 %% Liest die Zahlenfolge aus der angegebenen Datei ein
 readList() ->
   readList("zahlen.dat").
@@ -64,7 +86,7 @@ readList(FileName) ->
 
 
 
-%% Konvertiert eine Erlang-Liste in ein rekursiv geschachteltes Tupel
+%% Konvertiert eine Erlang-Liste zu einem rekursiv geschachtelten Tupel
 listToArray(List) ->
   if
     is_list(List) ->
