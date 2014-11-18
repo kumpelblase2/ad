@@ -13,15 +13,23 @@
 -export([insertionS/3]).
 
 insertionS(ARRAY, START, END) ->
-  insertionS({ ARRAY, 0, 0 }, START, END, 1).
+  RESULT = insertionS({ ARRAY, 0, 0 }, START, END, 1),
+  { TEMP, _ } = RESULT,
+  file:write_file("sortiert.dat", io_lib:format("~p",[TEMP])),
+  RESULT.
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, _START, END, CURRENT) when CURRENT > END ->
   { ARRAY, { SWAPS, COMPARISON }};
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, START, END, CURRENT) ->
   CURR_ELEM = array:getA(ARRAY, CURRENT),
+  io:write(ARRAY),
+  io:nl(),
   { INSERT_POS, COMPARES } = findInsert(ARRAY, START, CURRENT - 1, CURR_ELEM),
   { TEMP, SWAP } = insertAt(ARRAY, INSERT_POS, CURRENT),
+  io:write(TEMP),
+  io:nl(),
+  io:nl(),
   insertionS({ TEMP, SWAPS + SWAP, COMPARES + COMPARISON }, START, END, CURRENT + 1).
 
 findInsert(ARRAY, START, END, ELEM) when START > END ->
@@ -32,8 +40,8 @@ findInsert(ARRAY, START, END, ELEM) when START > END ->
 findInsert(ARRAY, START, END, ELEM) ->
   LAST = array:getA(ARRAY, END),
   PREVIOUS = array:getA(ARRAY, END + 1),
-  SMALLER = (ELEM > LAST),
-  LARGER = (ELEM < PREVIOUS),
+  SMALLER = (ELEM >= LAST),
+  LARGER = (ELEM =< PREVIOUS),
   util:counting(compare, 2),
   CORRECT = SMALLER and LARGER,
   if CORRECT ->
@@ -47,7 +55,7 @@ findInsert(ARRAY, START, END, ELEM) ->
 insertAt(ARRAY, POS, CURRENT_POS) when POS == CURRENT_POS ->
   SWAPS = util:countread(swap),
   util:countreset(swap),
-  { ARRAY, SWAPS};
+  { ARRAY, SWAPS };
 
 insertAt(ARRAY, POS, CURRENT_POS) ->
   TEMP_ARRAY = switch(ARRAY, CURRENT_POS - 1, CURRENT_POS),
