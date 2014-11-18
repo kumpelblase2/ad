@@ -15,6 +15,7 @@
 run() ->
   startMessung(all).
 
+% Startet eine Messung für eine bestimmte Auswahl von Algorithmen.
 % Type = { all, insertion, selection }
 startMessung(all) ->
   SIZE = 100,
@@ -51,6 +52,8 @@ startMessung(selection) ->
   ok.
 
 
+% Führt eine Messung für eine bestimmte Anzahl Durchläufen und einer Listengröße durch.
+% Als Rückgabe gibt es die Größe und Typ, als auch die durchschnittliche Zeit, Täusche und Vergleiche.
 doMessung(TYPE, RUNS, SIZE) ->
   doMessung(TYPE, RUNS, SIZE, []).
 
@@ -72,6 +75,7 @@ doMessung(TYPE, RUNS, SIZE, TEMP) ->
       {SIZE, TYPE, AVG_TIME, AVG_SWAPS, AVG_COMPARE}
   end.
 
+% Führ einen einzenen durchlauf auf einer Liste durch und nimmt Zeit, Täusche und Vergleiche auf.
 execute(insertion, ARR) ->
   {_, SecsStart, MicroSecsStart} = now(),
   {_, { SWAPS, COMPARISONS }} = insertions:insertionS(ARR, 0, array:laenge(ARR) - 1),
@@ -86,6 +90,7 @@ execute(selection, ARR) ->
   RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   {RESULT_TIME, SWAPS, COMPARISONS}.
 
+% Berechnet die durchschnitts Werte der Messungen.
 calc_average(DATA) ->
   calc_average(DATA, 0, 0, 0, 0).
 
