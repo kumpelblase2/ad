@@ -29,17 +29,25 @@ startMessung(all) ->
 startMessung(insertion) ->
   SIZE = 100,
   RUNS = 100,
+  {_, SecsStart, MicroSecsStart} = now(),
   { INS_SIZE, INS_ALGORITHM, INS_AVERAGE_TIME, INS_AVERAGE_SWAPS, INS_AVERAGE_COMPARISON  } = doMessung(insertion, RUNS, SIZE),
   INS_DATA = { INS_SIZE, INS_ALGORITHM, INS_AVERAGE_TIME, INS_AVERAGE_SWAPS, INS_AVERAGE_COMPARISON  },
   file:write_file("messung.dat", io_lib:format("~p",[INS_DATA])),
+  {_, SecsEnd, MicroSecsEnd} = now(),
+  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  io:write(io:format("Run took: ~p ms", [RESULT_TIME])),
   ok;
 
 startMessung(selection) ->
   SIZE = 100,
   RUNS = 100,
+  {_, SecsStart, MicroSecsStart} = now(),
   { SEL_SIZE, SEL_ALGORITHM, SEL_AVERAGE_TIME, SEL_AVERAGE_SWAPS, SEL_AVERAGE_COMPARISON  } = doMessung(selection, RUNS, SIZE),
   SEL_DATA = { SEL_SIZE, SEL_ALGORITHM, SEL_AVERAGE_TIME, SEL_AVERAGE_SWAPS, SEL_AVERAGE_COMPARISON  },
   file:write_file("messung.dat", io_lib:format("~p",[SEL_DATA])),
+  {_, SecsEnd, MicroSecsEnd} = now(),
+  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  io:write(io:format("Run took: ~p ms", [RESULT_TIME])),
   ok.
 
 
@@ -65,17 +73,17 @@ doMessung(TYPE, RUNS, SIZE, TEMP) ->
   end.
 
 execute(insertion, ARR) ->
-  {_, _, MicroSecsStart} = now(),
+  {_, SecsStart, MicroSecsStart} = now(),
   {_, { SWAPS, COMPARISONS }} = insertions:insertionS(ARR, 0, array:laenge(ARR) - 1),
-  {_, _, MicroSecsEnd} = now(),
-  RESULT_TIME = MicroSecsEnd - MicroSecsStart,
+  {_, SecsEnd, MicroSecsEnd} = now(),
+  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   {RESULT_TIME, SWAPS, COMPARISONS};
 
 execute(selection, ARR) ->
-  {_, _, MicroSecsStart} = now(),
+  {_, SecsStart, MicroSecsStart} = now(),
   {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR) - 1),
-  {_, _, MicroSecsEnd} = now(),
-  RESULT_TIME = MicroSecsEnd - MicroSecsStart,
+  {_, SecsEnd, MicroSecsEnd} = now(),
+  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   {RESULT_TIME, SWAPS, COMPARISONS}.
 
 calc_average(DATA) ->
