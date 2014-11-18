@@ -15,11 +15,10 @@
 insertionS(ARRAY, START, END) ->
   RESULT = insertionS({ ARRAY, 0, 0 }, START, END, 1),
   { TEMP, _ } = RESULT,
-  file:write_file("sortiert.dat", io_lib:format("~p",[TEMP])),
+  generator:saveList(TEMP),
   RESULT.
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, _START, END, CURRENT) when CURRENT > END ->
-  generator:saveList(ARRAY),
   { ARRAY, { SWAPS, COMPARISON }};
 
 insertionS({ ARRAY, SWAPS, COMPARISON }, START, END, CURRENT) ->
