@@ -80,14 +80,14 @@ execute(insertion, ARR) ->
   {_, SecsStart, MicroSecsStart} = now(),
   {_, { SWAPS, COMPARISONS }} = insertions:insertionS(ARR, 0, array:laenge(ARR) - 1),
   {_, SecsEnd, MicroSecsEnd} = now(),
-  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  RESULT_TIME = (SecsEnd - SecsStart) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   {RESULT_TIME, SWAPS, COMPARISONS};
 
 execute(selection, ARR) ->
   {_, SecsStart, MicroSecsStart} = now(),
   {_, { SWAPS, COMPARISONS }} = selections:selectionS(ARR, 0, array:laenge(ARR) - 1),
   {_, SecsEnd, MicroSecsEnd} = now(),
-  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  RESULT_TIME = (SecsEnd - SecsStart) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   {RESULT_TIME, SWAPS, COMPARISONS}.
 
 % Berechnet die durchschnitts Werte der Messungen.
