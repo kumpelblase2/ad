@@ -1,4 +1,4 @@
-ï»¿         _____     _                   
+         _____     _                   
         |  ___|   | |                  
         | |__ _ __| | __ _ _ __   __ _ 
         |  __| '__| |/ _` | '_ \ / _` |
@@ -26,30 +26,30 @@ selections.erl
 insertions.erl
 
 /--------------------------\
-   VerfÃ¼gbare Funktionen
+   Verfügbare Funktionen
 \--------------------------/
 
 generator.erl
-  sortNum/2 (LENGTH, MODE): Generiert eine Zahlenfolge der LÃ¤nge LENGTH und schreibt sie in die Datei "zahlen.dat" aus.
-                            Die Art der Reihenfolge wird Ã¼ber MODE bestimmt.
-                            Akzeptierte Werte fÃ¼r MODE sind:
-                            random:        ZufÃ¤llige Zahlenfolge
-                            random_nodup:  ZufÃ¤llige Zahlenfolge ohne doppelte Vorkommen
+  sortNum/2 (LENGTH, MODE): Generiert eine Zahlenfolge der Länge LENGTH und schreibt sie in die Datei "zahlen.dat" aus.
+                            Die Art der Reihenfolge wird über MODE bestimmt.
+                            Akzeptierte Werte für MODE sind:
+                            random:        Zufällige Zahlenfolge
+                            random_nodup:  Zufällige Zahlenfolge ohne doppelte Vorkommen
                             ascending:     Aufsteigend sortierte Zahlenfolge
                             descending:    Absteigend sortierte Zahlenfolge
 
-  readList/0 ():            Liest aus der Datei "zahlen.dat" eine Erlang-Liste ein, konvertiert diese in ein ADT-Array und gibt es zurÃ¼ck.
+  readList/0 ():            Liest aus der Datei "zahlen.dat" eine Erlang-Liste ein, konvertiert diese in ein ADT-Array und gibt es zurück.
   saveList/1 (ARRAY):       Speichert ARRAY als Erlang-Liste in der Datei "sortiert.dat".
   
   
 messung.erl
-  startMessung/1 (ALGORITHM): FÃ¼hrt insgesamt 100 SortierdurchgÃ¤nge, mit 100-stelligen Zahlenfolgen, fÃ¼r den gewÃ¤hlten Algorithmus ALGORITHM durch
+  startMessung/1 (ALGORITHM): Führt insgesamt 100 Sortierdurchgänge, mit 100-stelligen Zahlenfolgen, für den gewählten Algorithmus ALGORITHM durch
                               und sichert die Durchschnittswerte aller Messungen in der Datei "messung.dat".
-                              Davon sind 80 DurchgÃ¤nge mit Zufallszahlenfolgen, 10 mit aufsteigend sortierten und 10 mit absteigend sortierten Zahlenfolgen.
-                              Aktzeptierte Werte fÃ¼r ALGORITHM sind:
-                              insertion:  DurchfÃ¼hrung mit InsertionSort
-                              selection:  DurchfÃ¼hrung mit SelectionSort
-                              all:        Je eine vollstÃ¤ndige DurchfÃ¼hrung, wie oben beschrieben, fÃ¼r alle Algorithmen.
+                              Davon sind 80 Durchgänge mit Zufallszahlenfolgen, 10 mit aufsteigend sortierten und 10 mit absteigend sortierten Zahlenfolgen.
+                              Aktzeptierte Werte für ALGORITHM sind:
+                              insertion:  Durchführung mit InsertionSort
+                              selection:  Durchführung mit SelectionSort
+                              all:        Je eine vollständige Durchführung, wie oben beschrieben, für alle Algorithmen.
                               
   run/0 ():                   Ruft startMessungen(ALGORITHM) mit ALGORITHM = all auf
 
