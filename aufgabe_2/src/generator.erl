@@ -14,6 +14,8 @@
 
 %% Generiert eine Zahlenfolge als Liste mit der Länge LENGTH, nach dem Schema MODE.
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
+  {A1, A2, A3} = now(),
+  random:seed(A1, A2, A3),
   sortNum(LENGTH, MODE, "zahlen.dat").
 
 sortNum(LENGTH, MODE, FILENAME) when LENGTH > 0 ->
