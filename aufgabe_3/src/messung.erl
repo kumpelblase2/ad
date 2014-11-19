@@ -20,11 +20,15 @@ run() ->
 startMessung(all) ->
   SIZE = 100,
   RUNS = 100,
+  {_, SecsStart, MicroSecsStart} = now(),
   { INS_SIZE, INS_ALGORITHM, INS_AVERAGE_TIME, INS_AVERAGE_SWAPS, INS_AVERAGE_COMPARISON  } = doMessung(insertion, RUNS, SIZE),
   { SEL_SIZE, SEL_ALGORITHM, SEL_AVERAGE_TIME, SEL_AVERAGE_SWAPS, SEL_AVERAGE_COMPARISON  } = doMessung(selection, RUNS, SIZE),
   INS_DATA = { INS_SIZE, INS_ALGORITHM, INS_AVERAGE_TIME, INS_AVERAGE_SWAPS, INS_AVERAGE_COMPARISON  },
   SEL_DATA = { SEL_SIZE, SEL_ALGORITHM, SEL_AVERAGE_TIME, SEL_AVERAGE_SWAPS, SEL_AVERAGE_COMPARISON  },
-  file:write_file("messung.dat", io_lib:format("~p\n~p",[INS_DATA, SEL_DATA])),
+  file:write_file("messung.dat", io_lib:format("~p\n~p\n",[INS_DATA, SEL_DATA]), [append]),
+  {_, SecsEnd, MicroSecsEnd} = now(),
+  RESULT_TIME = (SecsEnd - SecsStart) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  io:write(io:format("Run took: ~p ms", [RESULT_TIME])),
   ok;
 
 startMessung(insertion) ->
@@ -35,7 +39,7 @@ startMessung(insertion) ->
   INS_DATA = { INS_SIZE, INS_ALGORITHM, INS_AVERAGE_TIME, INS_AVERAGE_SWAPS, INS_AVERAGE_COMPARISON  },
   file:write_file("messung.dat", io_lib:format("~p",[INS_DATA])),
   {_, SecsEnd, MicroSecsEnd} = now(),
-  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  RESULT_TIME = (SecsEnd - SecsStart) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   io:write(io:format("Run took: ~p ms", [RESULT_TIME])),
   ok;
 
@@ -47,7 +51,7 @@ startMessung(selection) ->
   SEL_DATA = { SEL_SIZE, SEL_ALGORITHM, SEL_AVERAGE_TIME, SEL_AVERAGE_SWAPS, SEL_AVERAGE_COMPARISON  },
   file:write_file("messung.dat", io_lib:format("~p",[SEL_DATA])),
   {_, SecsEnd, MicroSecsEnd} = now(),
-  RESULT_TIME = (SecsStart - SecsEnd) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
+  RESULT_TIME = (SecsEnd - SecsStart) * 1000 + (MicroSecsEnd - MicroSecsStart) / 1000,
   io:write(io:format("Run took: ~p ms", [RESULT_TIME])),
   ok.
 
