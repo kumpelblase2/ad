@@ -44,8 +44,10 @@ quicksortRekursiv(ARRAY, START, END, _PIVOT) when (END - START) < 12 ->
 
 %%
 quicksortRekursiv(ARRAY, START, END, PIVOT) ->
-	{ TEMP, NEW_PIVOT } = insertPivot(ARRAY, START, END, PIVOT),
-	{ SORTED_LEFT, { LEFT_SWAP, LEFT_COMPARE }} = quicksortRekursiv(TEMP, START, NEW_PIVOT - 1),
+  %% ARRAY partitionieren
+	{ARRAY_WITH_CORRECT_PIVOT, NEW_PIVOT } = insertPivot(ARRAY, START, END, PIVOT),
+  %% Linkes Teilarray von ARRAY an rekursiven Aufruf uebergeben
+	{ SORTED_LEFT, { LEFT_SWAP, LEFT_COMPARE }} = quicksortRekursiv(ARRAY_WITH_CORRECT_PIVOT, START, NEW_PIVOT - 1),
 	{ RESULT, { RIGHT_SWAP, RIGHT_COMPARE }} = quicksortRekursiv(SORTED_LEFT, NEW_PIVOT + 1, END),
 	{ RESULT, { LEFT_SWAP + RIGHT_SWAP, LEFT_COMPARE + RIGHT_COMPARE }}.
 	
@@ -83,40 +85,62 @@ insertPivot(ARRAY, START, END, PIVOT) ->
 	insertPivot(ARRAY, START, END, PIVOT, []).
 
 %% Abbruch
-insertPivot(ARRAY, START, END, PIVOT, OPEN) when START == END ->
-	[LAST_OPEN | _] = OPEN,
-	TO_SWAP = LAST_OPEN - 1,
-	RESULT = swap(ARRAY, PIVOT, TO_SWAP),
-	{RESULT, TO_SWAP};
+insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) when CURPOS == END ->
+	[FIRST_OPEN_CARD | _] = OPEN_CARDS,
+  LAST_CLOSED_CARD = FIRST_OPEN_CARD - 1, %% Position der letzten geschlossenen Karte
+
+  if
+    %% liegt das Pivot innerhalb der offenen Karten
+    PIVOT > FIRST_OPEN_CARD ->
+      %% tausche es mit der ersten offenen Karte
+      RESULT = swap(ARRAY, PIVOT, FIRST_OPEN_CARD),
+      NEW_POS = FIRST_OPEN_CARD;
+
+    %% liegt das Pivot vor der letzten geschlossenen Karte
+    PIVOT < LAST_CLOSED_CARD ->
+      %% tausche es mit der letzten geschlossenen Karte
+      RESULT = swap(ARRAY, PIVOT, LAST_CLOSED_CARD),
+      NEW_POS = LAST_CLOSED_CARD;
+
+    %% liegt das Pivot bereits an der richtigen Stelle
+    true ->
+      RESULT = ARRAY,
+      NEW_POS = PIVOT
+  end,
+	{RESULT, NEW_POS};
 
 %% Sind Start und Pivot an der gleichen Stelle,
 %% rueckt der Start um eine Stelle nach rechts weiter
-insertPivot(ARRAY, START, END, PIVOT, OPEN) when START == PIVOT ->
-	insertPivot(ARRAY, START + 1, END, PIVOT, OPEN);
+insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN) when CURPOS == PIVOT ->
+	insertPivot(ARRAY, CURPOS + 1, END, PIVOT, OPEN);
 
 %%
-insertPivot(ARRAY, START, END, PIVOT, OPEN) ->
-	PIVOT_VALUE = array:getA(ARRAY, PIVOT), %% Wert des Pivotelements ermitteln
-	START_VALUE = array:getA(ARRAY, START), %% Wert des Elements an Startposition ermitteln
+insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) ->
+	%% OPEN: "Open-Cards-List" - enthaelt die Positionen aller Elemente, die groesser als das Pivot sind
+
+  PIVOT_VALUE = array:getA(ARRAY, PIVOT), %% Wert des Pivotelements ermitteln
+	CURPOS_VALUE = array:getA(ARRAY, CURPOS), %% Wert des Elements an aktueller Position ermitteln
 	util:counting1(compare),
 	if
-		START_VALUE < PIVOT_VALUE -> %% Falls das Element bei Start kleiner ist, als das Pivotelement
+		CURPOS_VALUE < PIVOT_VALUE -> %% Falls das Element an aktueller Position kleiner ist, als das Pivotelement
 			if
-				OPEN == [] ->  %% sind keine "Karten" mehr offen,
-					insertPivot(ARRAY, START + 1, END, PIVOT, OPEN);  %% gehe eine Position weiter
+				OPEN_CARDS == [] ->  %% und keine "Karten" mehr offen sind,
+					insertPivot(ARRAY, CURPOS + 1, END, PIVOT, OPEN_CARDS);  %% gehe eine Position weiter
 				true ->
-					[ TO_SWAP | REST ] = OPEN, %% Aufteilung von Liste aufgedeckter "Karten" -> TO_SWAP: Zu tauschendes Element
-          TEMP = swap(ARRAY, START, TO_SWAP), %% Tausche
-					insertPivot(TEMP, START + 1, END, PIVOT, REST ++ [START])
+					[ TO_SWAP | REST ] = OPEN_CARDS, %% teile die Liste aufgedeckter "Karten" auf -> TO_SWAP: Zu tauschendes Element
+          TEMP = swap(ARRAY, CURPOS, TO_SWAP), %% Tausche die Elemente
+					insertPivot(TEMP, CURPOS + 1, END, PIVOT, REST ++ [CURPOS]) %% fuege Element von aktueller Position
+                                                                      %% ans Ende der Open-Cards-List an
 			end;
-		true -> %%
-			insertPivot(ARRAY, START + 1, END, PIVOT, OPEN ++ [START])
+		true -> %% wenn Element bei aktueller Position nicht kleiner ist
+			insertPivot(ARRAY, CURPOS + 1, END, PIVOT, OPEN_CARDS ++ [CURPOS]) %% fuege Element von aktueller Position
+                                                                         %% ans Ende der Open-Cards-List an
 	end.
 	
 randomPivot(START, END) ->
 	random:uniform(END - START + 1) + START - 1.
-	
-%% Tauscht zwei Element in der array, zwische POS und POS2.
+
+%% Vertauscht die Elemente an den Positionen POS und POS2
 swap(ARRAY, POS, POS2) ->
 	util:counting1(swap),
 	TEMP = array:getA(ARRAY, POS),
