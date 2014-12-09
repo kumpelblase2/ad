@@ -55,14 +55,7 @@ quicksortRekursiv(ARRAY, START, END, PIVOT) ->
 
 	
 quicksortRandom(ARRAY, START, END) ->
-	if
-		(START - END) < 1 ->
-			quicksortRandom(ARRAY, START, END, 0);
-		true ->
-			PIVOT = randomPivot(START, END),
-			io:write(PIVOT), io:nl(),
-			quicksortRandom(ARRAY, START, END, PIVOT)
-	end.
+	quicksortRandom(ARRAY, START, END, randomPivot(START, END)).
 
 quicksortRandom(ARRAY, START, END, _PIVOT) when (END - START) < 1 ->
 	SWAPS = util:countread(swap),
@@ -160,7 +153,13 @@ insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) ->
 	end.
 	
 randomPivot(START, END) ->
-	random:uniform(END - START + 1) + START - 1.
+	if
+		(END - START) =< 1 ->
+			START;
+		true ->
+			random:seed(now()),
+			random:uniform(END - START + 1) + START - 1
+	end.
 
 %% Vertauscht die Elemente an den Positionen POS und POS2
 swap(ARRAY, POS, POS2) ->
