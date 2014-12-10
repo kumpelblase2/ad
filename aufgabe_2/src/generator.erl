@@ -10,7 +10,7 @@
 -author("tim_hartig").
 
 %% API
--export([sortNum/2, sortNum/3, readList/0, saveList/1]).
+-export([sortNum/2, readList/0, saveList/1]).
 
 %% Generiert eine Zahlenfolge als Liste mit der Länge LENGTH, nach dem Schema MODE.
 sortNum(LENGTH, MODE) when LENGTH > 0 ->
