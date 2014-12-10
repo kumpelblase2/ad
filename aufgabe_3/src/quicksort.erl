@@ -17,7 +17,7 @@
 %% selections.erl
 
 %% API
--export([quicksortRekursiv/3, quicksortRandom/3]).
+-export([compileRequiredModules/0, quicksortRekursiv/3, quicksortRandom/3]).
 
 %% Hauptfunktion f. quicksortRekursiv mit linkestem Element als Pivot
 quicksortRekursiv(ARRAY, START, END) ->
@@ -206,3 +206,10 @@ swap(ARRAY, POS, POS2) ->
 	TEMP = array:getA(ARRAY, POS),
 	TEMP_ARR = array:setA(ARRAY, POS, array:getA(ARRAY, POS2)),
 	array:setA(TEMP_ARR, POS2, TEMP).
+
+compileRequiredModules() ->
+  compile:file('liste.erl'),
+  compile:file('array.erl'),
+  compile:file('generator.erl'),
+  compile:file('util.erl'),
+  compile:file('selections.erl').
