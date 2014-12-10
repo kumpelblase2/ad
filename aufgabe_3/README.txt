@@ -17,6 +17,8 @@
   Zu kompilierende Dateien
 \--------------------------/
 
+(quicksort.erl kompilieren und compileDependencies/0 ausführen!)
+
 liste.erl
 array.erl
 generator.erl
@@ -28,8 +30,13 @@ selections.erl
 \--------------------------/
 
 quicksort.erl
-  quicksortRekursiv/3 (ARRAY, START, ENDE): Sortiert ARRAY von der Position ANFANG bis Position ENDE mittels Quicktsort.
-                                            Je Aufruf wird das erste (linkeste) Element wird als Pivot-Element gewählt.
+  compileDependencies/0 (): Kompiliert alle benötigten Module. Die Module müssen dafür im Arbeitsverzeichnis liegen.
 
-  quicksortRandom/3 (ARRAY, START, ENDE): Sortiert ARRAY von der Position ANFANG bis Position ENDE mittels Quicktsort.
-                                          Je Aufruf wird das Pivot-Element zufällig innerhalb ARRAY bestimmt.
+  quicksortRekursiv/3 (ARRAY, START, END): Sortiert ARRAY von der Position START bis Position END mittels Quicktsort.
+                                           Je Aufruf wird das erste (linkeste) Element wird als Pivot-Element gewählt.
+                                            
+  quicksortRekursiv/4 (ARRAY, START, END, PIVOT_FUNC(X,Y)): Sortiert ARRAY von der Position START bis Position END mittels Quicktsort.
+                                                            Mittels PIVOT_FUNC(X,Y) kann eine anonyme Funktion zur Bestimmung des Pivot-Elements übergeben werden.
+
+  quicksortRandom/3 (ARRAY, START, END): Sortiert ARRAY von der Position ANFANG bis Position END mittels Quicktsort.
+                                         Je Aufruf wird das Pivot-Element zufällig innerhalb ARRAY bestimmt.
