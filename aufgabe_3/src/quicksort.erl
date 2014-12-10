@@ -35,11 +35,11 @@ quicksortRekursiv(ARRAY, START, END, _PIVOT_FUNC) when (END - START) < 1 ->
 %% wird es mit SelectionSort sortiert
 %% und das sortierte Array zurueckgegeben
 quicksortRekursiv(ARRAY, START, END, _PIVOT_FUNC) when (END - START) < 12 ->
-	{ TEMP, { SWAP_SEL, COMPARE_SEL }} = selections:selectionS(ARRAY, START, END),
 	SWAPS = util:countread(swap),
 	COMPARISON = util:countread(compare),
 	util:countreset(swap),
 	util:countreset(compare),
+	{ TEMP, { SWAP_SEL, COMPARE_SEL }} = selections:selectionS(ARRAY, START, END),
 	{ TEMP, { SWAPS + SWAP_SEL, COMPARISON + COMPARE_SEL }};
 
 %% Regulaerer Aufruf
