@@ -17,7 +17,7 @@
 %% selections.erl
 
 %% API
--export([compileRequiredModules/0, quicksortRekursiv/3, quicksortRekursiv/4, quicksortRandom/3]).
+-export([compileDependencies/0, quicksortRekursiv/3, quicksortRekursiv/4, quicksortRandom/3]).
 
 %% Hauptfunktion f. quicksortRekursiv mit linkestem Element als Pivot
 quicksortRekursiv(ARRAY, START, END) ->
@@ -42,7 +42,7 @@ quicksortRekursiv(ARRAY, START, END, _PIVOT_FUNC) when (END - START) < 12 ->
 	{ TEMP, { SWAP_SEL, COMPARE_SEL }} = selections:selectionS(ARRAY, START, END),
 	{ TEMP, { SWAPS + SWAP_SEL, COMPARISON + COMPARE_SEL }};
 
-%% Regulaerer Aufruf
+%% Regulaerer Aufruf // Hauptfunktion bei direkter Nutzung von quicksortRekursiv, wenn PIVOT_FUNC selbst bestimmt
 quicksortRekursiv(ARRAY, START, END, PIVOT_FUNC) ->
   %% ARRAY partitionieren
 	{PARTITIONED_ARRAY, NEW_PIVOT} = insertPivot(ARRAY, START, END, PIVOT_FUNC(START, END)),
@@ -105,8 +105,8 @@ insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) when CURPOS > END ->
 
 %% Sind Start und Pivot an der gleichen Stelle,
 %% rueckt der Start um eine Stelle nach rechts weiter
-insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN) when CURPOS == PIVOT ->
-	insertPivot(ARRAY, CURPOS + 1, END, PIVOT, OPEN);
+insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) when CURPOS == PIVOT ->
+	insertPivot(ARRAY, CURPOS + 1, END, PIVOT, OPEN_CARDS);
 
 %% Regulaerer Aufruf
 insertPivot(ARRAY, CURPOS, END, PIVOT, OPEN_CARDS) ->
@@ -157,7 +157,7 @@ swap(ARRAY, POS, POS2) ->
 	TEMP_ARR = array:setA(ARRAY, POS, array:getA(ARRAY, POS2)),
 	array:setA(TEMP_ARR, POS2, TEMP).
 
-compileRequiredModules() ->
+compileDependencies() ->
   compile:file('liste.erl'),
   compile:file('array.erl'),
   compile:file('generator.erl'),
