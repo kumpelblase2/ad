@@ -17,14 +17,14 @@
 %% selections.erl
 
 %% API
--export([compileRequiredModules/0, quicksortRekursiv/3, quicksortRandom/3]).
+-export([compileRequiredModules/0, quicksortRekursiv/3, quicksortRekursiv/4, quicksortRandom/3]).
 
 %% Hauptfunktion f. quicksortRekursiv mit linkestem Element als Pivot
 quicksortRekursiv(ARRAY, START, END) ->
-	quicksortRekursiv(ARRAY, START, END, START).
+	quicksortRekursiv(ARRAY, START, END, fun(X, _Y) -> X end).
 
 %% Aufruf, falls das Ende erreicht bzw. 'ueberschritten' wurde
-quicksortRekursiv(ARRAY, START, END, _PIVOT) when (END - START) < 1 ->
+quicksortRekursiv(ARRAY, START, END, _PIVOT_FUNC) when (END - START) < 1 ->
 	SWAPS = util:countread(swap),
 	COMPARISON = util:countread(compare),
 	util:countreset(swap),
@@ -34,7 +34,7 @@ quicksortRekursiv(ARRAY, START, END, _PIVOT) when (END - START) < 1 ->
 %% Falls das uebergebene Array weniger als 12 Elemente hat,
 %% wird es mit SelectionSort sortiert
 %% und das sortierte Array zurueckgegeben
-quicksortRekursiv(ARRAY, START, END, _PIVOT) when (END - START) < 12 ->
+quicksortRekursiv(ARRAY, START, END, _PIVOT_FUNC) when (END - START) < 12 ->
 	{ TEMP, { SWAP_SEL, COMPARE_SEL }} = selections:selectionS(ARRAY, START, END),
 	SWAPS = util:countread(swap),
 	COMPARISON = util:countread(compare),
@@ -43,9 +43,9 @@ quicksortRekursiv(ARRAY, START, END, _PIVOT) when (END - START) < 12 ->
 	{ TEMP, { SWAPS + SWAP_SEL, COMPARISON + COMPARE_SEL }};
 
 %% Regulaerer Aufruf
-quicksortRekursiv(ARRAY, START, END, PIVOT) ->
+quicksortRekursiv(ARRAY, START, END, PIVOT_FUNC) ->
   %% ARRAY partitionieren
-	{PARTITIONED_ARRAY, NEW_PIVOT} = insertPivot(ARRAY, START, END, PIVOT),
+	{PARTITIONED_ARRAY, NEW_PIVOT} = insertPivot(ARRAY, START, END, PIVOT_FUNC(START, END)),
   %% Teil, links vom Pivot, des Arrays sortieren
 	{ARRAY_WITH_LEFT_PART_SORTED, {LEFT_SWAPS, LEFT_COMPARES}} = quicksortRekursiv(PARTITIONED_ARRAY, START, NEW_PIVOT - 1),
   %% Teil, rechts vom Pivot, des Arrays mit links sortiertem Teil, sortieren
@@ -57,57 +57,7 @@ quicksortRekursiv(ARRAY, START, END, PIVOT) ->
 
 %% Hauptfunktion f. quicksortRandom mit zufaelligem Pivot
 quicksortRandom(ARRAY, START, END) ->
-	quicksortRandom(ARRAY, START, END, randomPivot(START, END)).
-
-%% Aufruf, falls das Ende erreicht oder 'ueberschritten' wurde:
-%% Das sortierte Array und die Messdaten werden zurueckgegeben
-quicksortRandom(ARRAY, START, END, _PIVOT) when (END - START) < 1 ->
-	SWAPS = util:countread(swap),
-	COMPARISON = util:countread(compare),
-	util:countreset(swap),
-	util:countreset(compare),
-	{ARRAY, {SWAPS, COMPARISON}};
-
-%% Aufruf fuer Arrays bzw. Bereichen mit weniger als 12 Elementen
-%% => Sortierung des Teils wird mit Selection-Sort durchgefuehrt
-quicksortRandom(ARRAY, START, END, _PIVOT) when (END - START) < 12 ->
-	{SORTED_ARRAY, {SWAPS_SEL, COMPARES_SEL}} = selections:selectionS(ARRAY, START, END),
-	SWAPS = util:countread(swap),
-	COMPARISON = util:countread(compare),
-	util:countreset(swap),
-	util:countreset(compare),
-	{SORTED_ARRAY, {SWAPS + SWAPS_SEL, COMPARISON + COMPARES_SEL}};
-
-%% Regulaerer Aufruf
-quicksortRandom(ARRAY, START, END, PIVOT) ->
-  %% ARRAY partitionieren
-	{PARTITIONED_ARRAY, NEW_PIVOT} = insertPivot(ARRAY, START, END, PIVOT),
-
-	if% Falls nach der Partitionierung das Pivot...
-    % ...an das Ende gerueckt wurde...
-		NEW_PIVOT == END ->
-      % ...muss 'nur' der Teil links vom Pivot uebergeben werden (ein lokaler worst case)...
-			{ ARRAY_WITH_LEFT_PART_SORTED, {LEFT_SWAPS, LEFT_COMPARES}} = quicksortRandom(PARTITIONED_ARRAY, START, NEW_PIVOT - 1),
-			% ...und fuer den fiktiven, rechten Teil werden die Swaps und Compares auf 0 gesetzt
-      { SORTED_ARRAY, {RIGHT_SWAPS, RIGHT_COMPARES}} = {ARRAY_WITH_LEFT_PART_SORTED, { 0, 0 } };
-
-    % ...an den Anfang gerueckt wurde...
-		NEW_PIVOT == START ->
-      % ...werden fuer den fiktiven, linken Teil Swaps und Compares auf 0 gesetzt und...
-			{ ARRAY_WITH_LEFT_PART_SORTED, {LEFT_SWAPS, LEFT_COMPARES}} = {PARTITIONED_ARRAY, { 0, 0 } },
-      % ...es muss 'nur' der Teil rechts vom Pivot uebergeben werden (ein lokaler worst case)
-			{ SORTED_ARRAY, {RIGHT_SWAPS, RIGHT_COMPARES}} = quicksortRandom(ARRAY_WITH_LEFT_PART_SORTED, NEW_PIVOT + 1, END);
-
-    % ...zwischen Anfang und Ende gerueckt wurde...
-		true ->
-      % ...wird erst der Teil links vom Pivot sortiert...
-			{ ARRAY_WITH_LEFT_PART_SORTED, {LEFT_SWAPS, LEFT_COMPARES}} = quicksortRandom(PARTITIONED_ARRAY, START, NEW_PIVOT - 1),
-      % ...und anschließend der rechte Teile des Arrays mit links sortiertem Teil sortiert
-			{ SORTED_ARRAY, {RIGHT_SWAPS, RIGHT_COMPARES}} = quicksortRandom(ARRAY_WITH_LEFT_PART_SORTED, NEW_PIVOT + 1, END)
-	end,
-
-  % Sortiertes Array mit zusammengezaehlten Messdaten zurueckgeben
-	{ SORTED_ARRAY, { LEFT_SWAPS + RIGHT_SWAPS, LEFT_COMPARES + RIGHT_COMPARES}}.
+	quicksortRekursiv(ARRAY, START, END, fun(X, Y) -> randomPivot(X, Y) end).
 
 
 %% Partitioniert das ARRAY, indem es das Pivot an die korrekte Stelle im ARRAY einrueckt
