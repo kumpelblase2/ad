@@ -145,7 +145,9 @@ rightRotation(AVL) ->
 	LEFT_HEIGHT_UPDATE.
 
 doubleLeftRotation(AVL) ->
-	AVL.
+	FIRST_ROTATION = setNode(AVL, right, rightRotation(getNode(AVL, right))),
+	leftRotation(FIRST_ROTATION).
 
 doubleRightRotation(AVL) ->
-	AVL.
+	FIRST_ROTATION = setNode(AVL, left, leftRotation(getNode(AVL, left))),
+	rightRotation(FIRST_ROTATION).
