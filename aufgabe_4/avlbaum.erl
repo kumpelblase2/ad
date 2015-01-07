@@ -25,18 +25,20 @@ getNode({_, _, RIGHT}, right) ->
 	RIGHT.
 
 setNode(AVL, POS, VAL) ->
-	CURR = getNode(AVL, POS).
+	CURR = getNode(AVL, POS),
+	IS_NODE = isNode(CURR),
+	IS_VAL_NODE = isNode(VAL),
 	if
-		isNode(CURR) ->
+		IS_NODE ->
 			if
-				isNode(VAL) ->
+				IS_VAL_NODE ->
 					replaceNode(AVL, POS, VAL);
 				true ->
 					setNodeVal(AVL, POS, VAL)
 			end;
 		true ->
 			if
-				isNode(VAL) ->
+				IS_VAL_NODE ->
 					replaceNode(AVL, POS, VAL);
 				true ->
 					replaceNode(AVL, POS, create(VAL))
@@ -50,7 +52,7 @@ replaceNode({LEFT, OWN, _}, right, NEW) ->
 	{LEFT, OWN, NEW}.
 
 setNodeVal(AVL, POS, VAL) ->
-	NODE = getNode(AVL, POS).
+	NODE = getNode(AVL, POS),
 	setValue(NODE, VAL).
 
 getValue({}) ->
@@ -71,8 +73,17 @@ hoehe({_, {_, HEIGHT}, _}) ->
 setHeight({LEFT, {VAL, _}, RIGHT}, HEIGHT_VAL) ->
 	{LEFT, {VAL, HEIGHT_VAL}, RIGHT}.
 
+isEmpty({_, {empty, _}, _}) ->
+	true;
+
 isEmpty({})->
-	true.
+	true;
+
+isEmpty({empty, _}) ->
+	true;
+
+isEmpty(_) ->
+	false.
 
 balancing({}) ->
 	0;
@@ -81,11 +92,14 @@ balancing(AVL) ->
 	hoehe(getNode(AVL, right)) - hoehe(getNode(AVL, left)).
 
 insert(AVL, VAL) ->
+	EMPTY = isEmpty(AVL),
 	if
-		isEmpty(AVL) ->
-			setHeight(setValue(AVL, VAL), 1);
+		EMPTY ->
+			EMPTY_NODE = create(),
+			VALUED = setValue(EMPTY_NODE, VAL),
+			setHeight(VALUED, 1);
 		true ->
-			OWN_VALUE = getValue(AVL).
+			OWN_VALUE = getValue(AVL),
 			if
 				VAL == OWN_VALUE ->
 					POS = none;
@@ -93,24 +107,25 @@ insert(AVL, VAL) ->
 					POS = right;
 				true ->
 					POS = left
-			end.
+			end,
 			if
 				POS == none ->
 					AVL;
 				true ->
-					SUB_AVL = insert(getNode(AVL, POS), VAL).
-					NEW_HEIGHT = getHeight(SUB_AVL) + 1,
-					CURR_HEIGHT = getHeight(AVL),
+					SUB_AVL = insert(getNode(AVL, POS), VAL),
+					INSERTED = setNode(AVL, POS, SUB_AVL),
+					NEW_HEIGHT = hoehe(SUB_AVL) + 1,
+					CURR_HEIGHT = hoehe(AVL),
 					if
 						NEW_HEIGHT > CURR_HEIGHT ->
-							MY_NEW = setHeight(AVL, NEW_HEIGHT);
+							MY_NEW = setHeight(INSERTED, NEW_HEIGHT);
 						true ->
-							MY_NEW = AVL
+							MY_NEW = INSERTED
 					end,
-					BALANCE = abs(balancing(MY_NEW)).
+					BALANCE = abs(balancing(MY_NEW)),
 					if
 						BALANCE > 1 ->
-							rebalance(MY_NEW).
+							rebalance(MY_NEW);
 						true ->
 							MY_NEW
 					end
@@ -121,27 +136,27 @@ rebalance(AVL) ->
 	BALANCING = balancing(AVL),
 	if
 		BALANCING >= 2 ->
-			leftRotation(AVL).
-		BALANCING <= -2 ->
-			rightRotation(AVL).
+			leftRotation(AVL);
+		BALANCING =< -2 ->
+			rightRotation(AVL);
 		true ->
-			AVL.
+			AVL
 	end.
 
 leftRotation(AVL) ->
 	SUB_RIGHT = getNode(AVL, right),
 	REPLACE_LEFT = setNode(AVL, right, getNode(SUB_RIGHT, left)),
-	LEFT_HEIGHT_UPDATE = setHeight(REPALCE_LEFT, erlang:max(getHeight(getNode(REPLACE_LEFT, left)), getHeight(getNode(REPALCE_LEFT, right)))),
+	LEFT_HEIGHT_UPDATE = setHeight(REPLACE_LEFT, erlang:max(hoehe(getNode(REPLACE_LEFT, left)), hoehe(getNode(REPLACE_LEFT, right)))),
 	REPLACE_RIGHT = setNode(SUB_RIGHT, left, LEFT_HEIGHT_UPDATE),
-	RIGHT_HEIGHT_UPDATE = setHeight(REPALCE_RIGHT, erlang:max(getHeight(getNode(REPALCE_RIGHT, left)), getHeight(getNode(REPALCE_RIGHT, right)))),
+	RIGHT_HEIGHT_UPDATE = setHeight(REPLACE_RIGHT, erlang:max(hoehe(getNode(REPLACE_RIGHT, left)), hoehe(getNode(REPLACE_RIGHT, right)))),
 	RIGHT_HEIGHT_UPDATE.
 
 rightRotation(AVL) ->
 	SUB_LEFT = getNode(AVL, left),
 	REPLACE_RIGHT = setNode(AVL, left, getNode(SUB_LEFT, right)),
-	RIGHT_HEIGHT_UPDATE = setHeight(REPLACE_RIGHT, erlang:max(getHeight(getNode(REPLACE_RIGHT, left)), getHeight(getNode(REPLACE_RIGHT, right)))),
+	RIGHT_HEIGHT_UPDATE = setHeight(REPLACE_RIGHT, erlang:max(hoehe(getNode(REPLACE_RIGHT, left)), hoehe(getNode(REPLACE_RIGHT, right)))),
 	REPLACE_LEFT = setNode(SUB_LEFT, right, RIGHT_HEIGHT_UPDATE),
-	LEFT_HEIGHT_UPDATE = setHeight(REPLACE_LEFT, erlang:max(getHeight(getNode(REPLACE_LEFT, left)), getHeight(getNode(REPLACE_LEFT, right)))),
+	LEFT_HEIGHT_UPDATE = setHeight(REPLACE_LEFT, erlang:max(hoehe(getNode(REPLACE_LEFT, left)), hoehe(getNode(REPLACE_LEFT, right)))),
 	LEFT_HEIGHT_UPDATE.
 
 doubleLeftRotation(AVL) ->
