@@ -136,9 +136,21 @@ rebalance(AVL) ->
 	BALANCING = balancing(AVL),
 	if
 		BALANCING >= 2 ->
-			leftRotation(AVL);
+			BALANCING_LEFT = balancing(getNode(AVL, left)),
+			if
+				BALANCING_LEFT > 0 ->
+					leftRotation(AVL);
+				true ->
+					doubleLeftRotation(AVL)
+			end;
 		BALANCING =< -2 ->
-			rightRotation(AVL);
+			BALANCING_RIGHT = balancing(getNode(AVL, right)),
+			if
+				BALANCING_RIGHT < 0 ->
+					rightRotation(AVL);
+				true ->
+					doubleRightRotation(AVL)
+			end;
 		true ->
 			AVL
 	end.
