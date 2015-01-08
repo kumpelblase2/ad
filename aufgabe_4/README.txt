@@ -41,3 +41,5 @@ avlbaum.erl
     balancing/1 (TREE): (Re)Balanciert den Baum ggf. unter Verwendung von Links- bzw. Rechtsrotationen.
 
     insert/2 (TREE, VALUE): Fügt VALUE in den Baum an der entsprechenden Stelle ein und balanciert den Baum ggf. neu.
+
+    delete/2 (TREE, VALUE): Löscht VALUE aus dem Baum und begibt diesen danach in einenen balancierten Zustand.

@@ -1,13 +1,13 @@
 -module(avlbaum).
 -author("tim_hagemann").
 
--export([create/0, create/1, getNode/2, getValue/1, setValue/2, hoehe/1, balancing/1, setNode/3, insert/2]).
+-export([create/0, create/1, getNode/2, getValue/1, setValue/2, hoehe/1, balancing/1, setNode/3, insert/2, delete/2]).
 
 create() ->
-	create(empty).
+	{}.
 
 create(SELF) ->
-	{{}, {SELF, 0}, {}}.
+	{{}, {SELF, 1}, {}}.
 
 isNode({}) ->
 	true;
@@ -61,6 +61,9 @@ getValue({}) ->
 getValue({_, {VAL, _}, _}) ->
 	VAL.
 
+setValue({}, VAL) ->
+	create(VAL);
+
 setValue({LEFT, {_, HEIGHT}, RIGHT}, VAL) ->
 	{LEFT, {VAL, HEIGHT}, RIGHT}.
 
@@ -73,15 +76,8 @@ hoehe({_, {_, HEIGHT}, _}) ->
 setHeight({LEFT, {VAL, _}, RIGHT}, HEIGHT_VAL) ->
 	{LEFT, {VAL, HEIGHT_VAL}, RIGHT}.
 
-isEmpty({_, {empty, _}, _}) ->
-	true;
-
 isEmpty({})->
 	true;
-
-isEmpty({empty, _}) ->
-	true;
-
 isEmpty(_) ->
 	false.
 
@@ -95,9 +91,7 @@ insert(AVL, VAL) ->
 	EMPTY = isEmpty(AVL),
 	if
 		EMPTY ->
-			EMPTY_NODE = create(),
-			VALUED = setValue(EMPTY_NODE, VAL),
-			setHeight(VALUED, 1);
+			create(VAL);
 		true ->
 			OWN_VALUE = getValue(AVL),
 			if
@@ -129,6 +123,28 @@ insert(AVL, VAL) ->
 						true ->
 							MY_NEW
 					end
+			end
+	end.
+
+delete(AVL, VALUE) ->
+	CURRENT_VALUE = getValue(AVL),
+	if
+		CURRENT_VALUE > VALUE ->
+			setNode(AVL, left, delete(getNode(AVL, left), VALUE));
+		CURRENT_VALUE < VALUE ->
+			setNode(AVL, right, delete(getNode(AVL, right), VALUE));
+		true ->
+			LEFT_EMPTY = isEmpty(getNode(AVL, left)),
+			RIGHT_EMPTY = isEmpty(getNode(AVL, right)),
+			if
+				LEFT_EMPTY and RIGHT_EMPTY ->
+					create();
+				LEFT_EMPTY ->
+					getNode(AVL, right);
+				RIGHT_EMPTY ->
+					getNode(AVL, left);
+				true ->
+					ok
 			end
 	end.
 
