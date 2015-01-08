@@ -89,7 +89,7 @@ balancing({}) ->
 	0;
 
 balancing(AVL) ->
-	hoehe(getNode(AVL, right)) - hoehe(getNode(AVL, left)).
+	hoehe(getNode(AVL, left)) - hoehe(getNode(AVL, right)).
 
 insert(AVL, VAL) ->
 	EMPTY = isEmpty(AVL),
@@ -139,7 +139,7 @@ rebalance(AVL) ->
 			BALANCING_LEFT = balancing(getNode(AVL, left)),
 			if
 				BALANCING_LEFT > 0 ->
-					leftRotation(AVL);
+					rightRotation(AVL);
 				true ->
 					doubleLeftRotation(AVL)
 			end;
@@ -147,7 +147,7 @@ rebalance(AVL) ->
 			BALANCING_RIGHT = balancing(getNode(AVL, right)),
 			if
 				BALANCING_RIGHT < 0 ->
-					rightRotation(AVL);
+					leftRotation(AVL);
 				true ->
 					doubleRightRotation(AVL)
 			end;
@@ -172,9 +172,9 @@ rightRotation(AVL) ->
 	LEFT_HEIGHT_UPDATE.
 
 doubleLeftRotation(AVL) ->
-	FIRST_ROTATION = setNode(AVL, right, rightRotation(getNode(AVL, right))),
+	FIRST_ROTATION = setNode(AVL, left, rightRotation(getNode(AVL, left))),
 	leftRotation(FIRST_ROTATION).
 
 doubleRightRotation(AVL) ->
-	FIRST_ROTATION = setNode(AVL, left, leftRotation(getNode(AVL, left))),
+	FIRST_ROTATION = setNode(AVL, right, leftRotation(getNode(AVL, right))),
 	rightRotation(FIRST_ROTATION).
