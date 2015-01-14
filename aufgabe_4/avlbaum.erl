@@ -1,7 +1,7 @@
 -module(avlbaum).
 -author("tim_hagemann").
 
--export([create/0, create/1, getNode/2, getValue/1, setValue/2, hoehe/1, balancing/1, setNode/3, insert/2, delete/2]).
+-export([create/0, create/1, getNode/2, getValue/1, hoehe/1, insert/2, delete/2]).
 
 create() ->
 	{}.
