@@ -144,7 +144,25 @@ delete(AVL, VALUE) ->
 				RIGHT_EMPTY ->
 					getNode(AVL, left);
 				true ->
+					LEFT_TREE = getNode(AVL, left)
+					HIGHEST = findHighestValue(LEFT_TREE),
+					DELETE_HIGHEST = delete(LEFT_TREE, HIGHEST),
 					ok
+			end
+	end.
+
+findHighestValue(TREE) ->
+	EMPTY = isEmpty(TREE),
+	if
+		EMPTY ->
+			undenfined;
+		true ->
+			RIGHT_EMTPY = isEmpty(getNode(TREE, right)),
+			if
+				RIGHT_EMPTY ->
+					getValue(TREE);
+				true ->
+					findHighestValue(getNode(TREE, right))
 			end
 	end.
 
