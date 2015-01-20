@@ -1,7 +1,7 @@
 -module(avlbaum).
 -author("tim_hagemann").
 
--export([create/0, create/1, getNode/2, getValue/1, hoehe/1, insert/2, delete/2]).
+-export([create/0, create/1, getNode/2, getValue/1, hoehe/1, insert/2, delete/2, export/2]).
 
 create() ->
 	{}.
@@ -144,7 +144,7 @@ delete(AVL, VALUE) ->
 				RIGHT_EMPTY ->
 					getNode(AVL, left);
 				true ->
-					LEFT_TREE = getNode(AVL, left)
+					LEFT_TREE = getNode(AVL, left),
 					HIGHEST = findHighestValue(LEFT_TREE),
 					DELETE_HIGHEST = delete(LEFT_TREE, HIGHEST),
 					ok
@@ -157,7 +157,7 @@ findHighestValue(TREE) ->
 		EMPTY ->
 			undenfined;
 		true ->
-			RIGHT_EMTPY = isEmpty(getNode(TREE, right)),
+      RIGHT_EMPTY = isEmpty(getNode(TREE, right)),
 			if
 				RIGHT_EMPTY ->
 					getValue(TREE);
@@ -212,3 +212,101 @@ doubleLeftRotation(AVL) ->
 doubleRightRotation(AVL) ->
 	FIRST_ROTATION = setNode(AVL, right, leftRotation(getNode(AVL, right))),
 	rightRotation(FIRST_ROTATION).
+
+%% Wenn linker und rechter Kindknoten leer sind, ist der Knoten ein Blatt
+isLeaf({true, true}) ->
+  true;
+  
+isLeaf({false,_}) ->
+  false;
+
+isLeaf({_,false}) ->
+  false;
+
+%% Gibt an, ob Wurzelknoten ein Blatt ist
+isLeaf(ROOT_NODE) ->
+  isLeaf({isEmpty(getNode(ROOT_NODE, left)), isEmpty(getNode(ROOT_NODE, right))}).
+
+%% Exportiert den AVL Baum in eine Datei im DOT Format
+export(AVL, PATH) ->
+  AVL_IS_EMPTY = isEmpty(AVL),
+  if
+    %% Falls Baum leer
+    AVL_IS_EMPTY ->
+      {no_export, tree_empty};
+    %% Falls Baum nicht leer
+    true ->
+      %% Datei öffnen und Dateikopf schreiben
+      FILE = initDot(PATH),
+      
+      ROOT_VAL = getValue(AVL),
+      LEFT_NODE = getNode(AVL, left),
+      RIGHT_NODE = getNode(AVL, right),
+
+      AVL_IS_LEAF = isLeaf(AVL),
+      if
+        %% Falls der Wurzelknoten keine Kinder hat
+        AVL_IS_LEAF ->
+          %% kann nur der Wert des WK, ohne Pfeile auf andere Knoten, geschrieben werden
+          writeDot(FILE, ROOT_VAL);
+
+        %% Andernfalls
+        true ->
+          LEFT_VAL = getValue(LEFT_NODE),
+          RIGHT_VAL = getValue(RIGHT_NODE),
+
+          %% Zeilen für die Verbindung zwischen Root und seinen Kindern ausschreiben
+          writeDot(FILE, ROOT_VAL, LEFT_VAL, hoehe(LEFT_NODE)),
+          writeDot(FILE, ROOT_VAL, RIGHT_VAL, hoehe(RIGHT_NODE)),
+
+          %% und rekursiv absteigen
+          export(FILE, LEFT_NODE, l),
+          export(FILE, RIGHT_NODE, r)
+      end,
+      
+      %% Datei (ab)schließen
+      closeDot(FILE)
+  end.
+
+%% Rekursionsabbruch
+export(_FILE, {}, _) ->
+  nil;
+
+%% Standartaufruf für alle nachfolgenden Knoten
+export(FILE, ROOT_NODE, _) when (ROOT_NODE /= {}) ->
+  LEFT_NODE = getNode(ROOT_NODE, left),
+  RIGHT_NODE = getNode(ROOT_NODE, right),
+
+  ROOT_VAL = getValue(ROOT_NODE),
+  LEFT_VAL = getValue(LEFT_NODE),
+  RIGHT_VAL = getValue(RIGHT_NODE),
+
+  writeDot(FILE, ROOT_VAL, LEFT_VAL, hoehe(LEFT_NODE)),
+  writeDot(FILE, ROOT_VAL, RIGHT_VAL, hoehe(RIGHT_NODE)),
+
+  %% Rekursiv absteigen
+  export(FILE, LEFT_NODE, l),
+  export(FILE, RIGHT_NODE, r).
+
+%% Initialisierung der Dot Datei
+initDot(PATH) ->
+  {ok, FILE} = file:open(PATH, [write]),
+  io:fwrite(FILE, "digraph avltree\r\n{\r\n", []),
+  file:open(PATH, [write, append]),
+  FILE.
+
+%% Nur Ausgabe des Wurzelknotens
+writeDot(FILE, ROOT_VAL) ->
+  io:fwrite(FILE, "  ~b;\r\n", [ROOT_VAL]).
+
+%% Ausgabe einer Zeile mit Elternknoten, Kindknoten und Höhe
+writeDot(_FILE, _ROOT_VAL, CHILD_VAL, _HEIGHT) when (CHILD_VAL == undefined) ->
+  nil;
+
+writeDot(FILE, ROOT_VAL, CHILD_VAL, HEIGHT) ->
+  io:fwrite(FILE, "  ~b -> ~b [label=\~b\];\r\n", [ROOT_VAL, CHILD_VAL, HEIGHT]).
+
+%% Abschluss der Dot Datei
+closeDot(FILE) ->
+  io:fwrite(FILE, "}\r\n", []),
+  file:close(FILE).

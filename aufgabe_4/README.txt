@@ -43,3 +43,5 @@ avlbaum.erl
     insert/2 (TREE, VALUE): Fügt VALUE in den Baum an der entsprechenden Stelle ein und balanciert den Baum ggf. neu.
 
     delete/2 (TREE, VALUE): Löscht VALUE aus dem Baum und begibt diesen danach in einenen balancierten Zustand.
+    
+    export/2 (AVL, PATH): Exportiert den AVL Baum in eine Datei nach PATH im .dot-Format.
