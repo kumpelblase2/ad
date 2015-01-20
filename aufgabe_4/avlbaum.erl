@@ -175,7 +175,7 @@ rebalance(AVL) ->
 				BALANCING_LEFT > 0 ->
 					rightRotation(AVL);
 				true ->
-					doubleLeftRotation(AVL)
+					doubleRightRotation(AVL)
 			end;
 		BALANCING =< -2 ->
 			BALANCING_RIGHT = balancing(getNode(AVL, right)),
@@ -183,11 +183,14 @@ rebalance(AVL) ->
 				BALANCING_RIGHT < 0 ->
 					leftRotation(AVL);
 				true ->
-					doubleRightRotation(AVL)
+					doubleLeftRotation(AVL)
 			end;
 		true ->
 			AVL
 	end.
+
+leftRotation({}) ->
+	{};
 
 leftRotation(AVL) ->
 	SUB_RIGHT = getNode(AVL, right),
@@ -197,6 +200,9 @@ leftRotation(AVL) ->
 	RIGHT_HEIGHT_UPDATE = setHeight(REPLACE_RIGHT, erlang:max(hoehe(getNode(REPLACE_RIGHT, left)), hoehe(getNode(REPLACE_RIGHT, right))) + 1),
 	RIGHT_HEIGHT_UPDATE.
 
+rightRotation({}) ->
+	{};
+
 rightRotation(AVL) ->
 	SUB_LEFT = getNode(AVL, left),
 	REPLACE_RIGHT = setNode(AVL, left, getNode(SUB_LEFT, right)),
@@ -205,18 +211,24 @@ rightRotation(AVL) ->
 	LEFT_HEIGHT_UPDATE = setHeight(REPLACE_LEFT, erlang:max(hoehe(getNode(REPLACE_LEFT, left)), hoehe(getNode(REPLACE_LEFT, right))) + 1),
 	LEFT_HEIGHT_UPDATE.
 
+doubleLeftRotation({}) ->
+	{};
+
 doubleLeftRotation(AVL) ->
-	FIRST_ROTATION = setNode(AVL, left, rightRotation(getNode(AVL, left))),
+	FIRST_ROTATION = setNode(AVL, right, rightRotation(getNode(AVL, right))),
 	leftRotation(FIRST_ROTATION).
 
+doubleRightRotation({}) ->
+	{};
+
 doubleRightRotation(AVL) ->
-	FIRST_ROTATION = setNode(AVL, right, leftRotation(getNode(AVL, right))),
+	FIRST_ROTATION = setNode(AVL, left, leftRotation(getNode(AVL, left))),
 	rightRotation(FIRST_ROTATION).
 
 %% Wenn linker und rechter Kindknoten leer sind, ist der Knoten ein Blatt
 isLeaf({true, true}) ->
   true;
-  
+
 isLeaf({false,_}) ->
   false;
 
@@ -238,7 +250,7 @@ export(AVL, PATH) ->
     true ->
       %% Datei öffnen und Dateikopf schreiben
       FILE = initDot(PATH),
-      
+
       ROOT_VAL = getValue(AVL),
       LEFT_NODE = getNode(AVL, left),
       RIGHT_NODE = getNode(AVL, right),
@@ -263,7 +275,7 @@ export(AVL, PATH) ->
           export(FILE, LEFT_NODE, l),
           export(FILE, RIGHT_NODE, r)
       end,
-      
+
       %% Datei (ab)schließen
       closeDot(FILE)
   end.
