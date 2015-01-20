@@ -24,24 +24,24 @@ avlbaum.erl
 \--------------------------/
 
 avlbaum.erl
-    create/0 (): Erstellt einen neuen, leeren AVL baum
+    create/0 (): Erstellt einen neuen, leeren AVL Baum
 
-    create/1 (ELEM): Erstellt einen neuen AVL Baum mit dem ELEM als ersten Node
+    create/1 (ELEM): Erstellt einen neuen AVL Baum mit ELEM als ersten Knoten
 
-    getNode/2 (TREE, POS): Gibt die Node an POS (left | right) an der Quelle des TREE zurück.
+    getNode/2 (TREE, POS): Gibt den Knoten an POS (left | right) an der Quelle des TREE zurück.
 
-    getValue/1 (NODE): Gibt den Wert der aktuellen Node zurück.
+    getValue/1 (NODE): Gibt den Wert der aktuellen Knotens NODE zurück.
 
-    setValue/2 (NODE, VALUE): Setzt den Wert der aktuellen Node auf VALUE.
+    setValue/2 (NODE, VALUE): Setzt den Wert ddes aktuellen Knotens NODE auf VALUE.
 
-    setNode/3 (TREE, POS, NODE): Setzt die Node an POS (left | right) des TREE auf NODE.
+    setNode/3 (TREE, POS, NODE): Setzt den Knoten an POS (left | right) des TREE auf NODE.
 
-    hoehe/1 (NODE): Gibt die Höhe der aktuellen Node aus.
+    hoehe/1 (NODE): Gibt die Höhe des aktuellen Knoten NODE aus.
 
-    balancing/1 (TREE): (Re)Balanciert den Baum ggf. unter Verwendung von Links- bzw. Rechtsrotationen.
+    balancing/1 (TREE): (Re)Balanciert den Baum ggf. durch Rotationen.
 
-    insert/2 (TREE, VALUE): Fügt VALUE in den Baum an der entsprechenden Stelle ein und balanciert den Baum ggf. neu.
+    insert/2 (TREE, VALUE): Fügt VALUE in den Baum TREE an der entsprechenden Stelle ein und balanciert den Baum ggf. neu.
 
-    delete/2 (TREE, VALUE): Löscht VALUE aus dem Baum und begibt diesen danach in einenen balancierten Zustand.
+    delete/2 (TREE, VALUE): Löscht VALUE aus dem Baum TREE und stellt anschließend ggf. die Balance wieder her.
     
     export/2 (AVL, PATH): Exportiert den AVL Baum in eine Datei nach PATH im .dot-Format.
