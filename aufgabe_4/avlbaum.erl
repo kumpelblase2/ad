@@ -147,7 +147,8 @@ delete(AVL, VALUE) ->
 					LEFT_TREE = getNode(AVL, left),
 					HIGHEST = findHighestValue(LEFT_TREE),
 					DELETE_HIGHEST = delete(LEFT_TREE, HIGHEST),
-					ok
+					RESET_LEFT = setNode(AVL, left, DELETE_HIGHEST),
+					setValue(RESET_LEFT, HIGHEST)
 			end
 	end.
 
