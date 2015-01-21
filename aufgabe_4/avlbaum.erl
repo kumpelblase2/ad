@@ -1,5 +1,5 @@
 -module(avlbaum).
--author("tim_hagemann").
+-author("tim_hagemann & tim_hartig").
 
 -export([create/0, create/1, getNode/2, getValue/1, hoehe/1, insert/2, delete/2, export/2]).
 
