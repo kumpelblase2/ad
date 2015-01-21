@@ -1,7 +1,7 @@
 -module(main).
 -author("tim_hagemann & tim_hartig").
 
--export([readTree/1]).
+-export([readTree/1, deleteRandom/2]).
 
 
 readTree(FileName) ->
@@ -27,7 +27,7 @@ listToTree([], Accu) ->
 deleteRandom(AVL, FileName) ->
     deleteRandomList(AVL, 25, util:zahlenfolgeRT(FileName)).
 
-deleteRandomList(AVL, _, [])
+deleteRandomList(AVL, _, []) ->
     AVL;
 
 deleteRandomList(AVL, 0, _) ->
@@ -36,8 +36,8 @@ deleteRandomList(AVL, 0, _) ->
 deleteRandomList(AVL, Remaining, [H|T]) ->
     RANDOM = random:uniform(),
     if
-        RANDOM >= 0.5
-            deleteRandomList(avlbaum:delete(AVL, H), Remaning - 1, T);
+        RANDOM >= 0.7 ->
+            deleteRandomList(avlbaum:delete(AVL, H), Remaining - 1, T);
         true ->
             deleteRandomList(AVL, Remaining, T)
     end.

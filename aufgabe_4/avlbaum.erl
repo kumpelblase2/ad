@@ -90,12 +90,16 @@ insert(AVL, VAL) ->
 			end
 	end.
 
+%% Wenn der Baum leer ist, braucht nichts gelöscht werden.
+delete({}, _) ->
+  {};
+  
 delete(AVL, VALUE) ->
 	CURRENT_VALUE = getValue(AVL),
 	if
 		%% Wenn der Wert kleiner ist als der aktuelle Knoten
 		CURRENT_VALUE > VALUE ->
-			%% Lösche rekursiv aus dem linken Teilbaum
+			%% Lösche rekursiv aus dem linken Teilbaum 
 			SET = setNode(AVL, left, delete(getNode(AVL, left), VALUE)),
 			%% Updated die Höhe des kompletten Baums
 			rebalance(setHeight(SET, erlang:max(hoehe(getNode(SET, left)), hoehe(getNode(SET, right))) + 1));
