@@ -130,9 +130,11 @@ delete(AVL, VALUE) ->
 	CURRENT_VALUE = getValue(AVL),
 	if
 		CURRENT_VALUE > VALUE ->
-			setNode(AVL, left, delete(getNode(AVL, left), VALUE));
+			SET = setNode(AVL, left, delete(getNode(AVL, left), VALUE)),
+			setHeight(SET, hoehe(getNode(SET, left)) + 1);
 		CURRENT_VALUE < VALUE ->
-			setNode(AVL, right, delete(getNode(AVL, right), VALUE));
+			SET = setNode(AVL, right, delete(getNode(AVL, right), VALUE)),
+			setHeight(SET, hoehe(getNode(SET, right)) + 1);
 		true ->
 			LEFT_EMPTY = isEmpty(getNode(AVL, left)),
 			RIGHT_EMPTY = isEmpty(getNode(AVL, right)),
