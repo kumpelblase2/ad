@@ -9,51 +9,17 @@ create() ->
 create(SELF) ->
 	{{}, {SELF, 1}, {}}.
 
-isNode({}) ->
-	true;
-
-isNode({_, {_, _}, _}) ->
-	true;
-
-isNode(_) ->
-	false.
-
 getNode({LEFT,_,_}, left) ->
 	LEFT;
 
 getNode({_, _, RIGHT}, right) ->
 	RIGHT.
 
-setNode(AVL, POS, VAL) ->
-	CURR = getNode(AVL, POS),
-	IS_NODE = isNode(CURR),
-	IS_VAL_NODE = isNode(VAL),
-	if
-		IS_NODE ->
-			if
-				IS_VAL_NODE ->
-					replaceNode(AVL, POS, VAL);
-				true ->
-					setNodeVal(AVL, POS, VAL)
-			end;
-		true ->
-			if
-				IS_VAL_NODE ->
-					replaceNode(AVL, POS, VAL);
-				true ->
-					replaceNode(AVL, POS, create(VAL))
-			end
-	end.
-
-replaceNode({_, OWN, RIGHT}, left, NEW) ->
+setNode({_, OWN, RIGHT}, left, NEW) ->
 	{NEW, OWN, RIGHT};
 
-replaceNode({LEFT, OWN, _}, right, NEW) ->
+setNode({LEFT, OWN, _}, right, NEW) ->
 	{LEFT, OWN, NEW}.
-
-setNodeVal(AVL, POS, VAL) ->
-	NODE = getNode(AVL, POS),
-	setValue(NODE, VAL).
 
 getValue({}) ->
 	undefined;
@@ -78,6 +44,7 @@ setHeight({LEFT, {VAL, _}, RIGHT}, HEIGHT_VAL) ->
 
 isEmpty({})->
 	true;
+
 isEmpty(_) ->
 	false.
 
@@ -116,17 +83,10 @@ insert(AVL, VAL) ->
 					SUB_AVL = insert(getNode(AVL, POS), VAL),
 					INSERTED = setNode(AVL, POS, SUB_AVL),
 					%% Neue Hoehe berechnen.
-					NEW_HEIGHT = hoehe(SUB_AVL) + 1,
+					NEW_HEIGHT = erlang:max(hoehe(getNode(INSERTED, left)), hoehe(getNode(INSERTED, right))) + 1,
 					MY_NEW = setHeight(INSERTED, NEW_HEIGHT),
-					%% Balancing bestimmen
-					BALANCE = abs(balancing(MY_NEW)),
-					if
-						%% Wenn eine Dysbalance vorliegt -> rebalancing
-						BALANCE > 1 ->
-							rebalance(MY_NEW);
-						true ->
-							MY_NEW
-					end
+					%% Rebalancing
+					rebalance(MY_NEW)
 			end
 	end.
 
@@ -138,23 +98,19 @@ delete(AVL, VALUE) ->
 			%% Lösche rekursiv aus dem linken Teilbaum
 			SET = setNode(AVL, left, delete(getNode(AVL, left), VALUE)),
 			%% Updated die Höhe des kompletten Baums
-			setHeight(SET, erlang:max(hoehe(getNode(SET, left)), hoehe(getNode(SET, right))) + 1);
+			rebalance(setHeight(SET, erlang:max(hoehe(getNode(SET, left)), hoehe(getNode(SET, right))) + 1));
 		%% Wenn der Wert größer ist als der aktuelle Knoten
 		CURRENT_VALUE < VALUE ->
 			%% Lösche rekursiv aus dem rechten Teilbaum
 			SET = setNode(AVL, right, delete(getNode(AVL, right), VALUE)),
 			%% Updated die Höhe des komplette Baums
-			setHeight(SET, erlang:max(hoehe(getNode(SET, right)), hoehe(getNode(SET, left))) + 1);
+			rebalance(setHeight(SET, erlang:max(hoehe(getNode(SET, right)), hoehe(getNode(SET, left))) + 1));
 		%% Wenn der aktuelle Knoten der zu löschende Wert ist
 		true ->
 			%% Schau, ob Kinder vorhande sind
 			LEFT_EMPTY = isEmpty(getNode(AVL, left)),
 			RIGHT_EMPTY = isEmpty(getNode(AVL, right)),
 			if
-				%% Wenn beide leer sind
-				LEFT_EMPTY and RIGHT_EMPTY ->
-					%% wir haben nun ein leeren Teilbaum
-					create();
 				%% Wenn links leer ist
 				LEFT_EMPTY ->
 					%% Haben wir nurnoch den rechten Teilbaum
@@ -173,7 +129,7 @@ delete(AVL, VALUE) ->
 					%% Setzte den linken Teilbaum auf den ohne hoechsten Wert
 					RESET_LEFT = setNode(AVL, left, DELETE_HIGHEST),
 					%% Setzte den Wert des aktuell, zu löschenden, Knotens auf den hoechsten Wert
-					setValue(RESET_LEFT, HIGHEST)
+					rebalance(setValue(RESET_LEFT, HIGHEST))
 			end
 	end.
 
