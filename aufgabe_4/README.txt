@@ -18,6 +18,8 @@
 \--------------------------/
 
 avlbaum.erl
+main.erl
+util.erl
 
 /--------------------------\
    Verfügbare Funktionen
@@ -45,3 +47,8 @@ avlbaum.erl
     delete/2 (TREE, VALUE): Löscht VALUE aus dem Baum TREE und stellt anschließend ggf. die Balance wieder her.
     
     export/2 (AVL, PATH): Exportiert den AVL Baum in eine Datei nach PATH im .dot-Format.
+
+main.erl
+	readTree/1 (FILE): Liest eine Baum aus einer Datei, welche eine Liste von Zahlen beinhaltet.
+	
+	deleteRandom/2 (TREE, NUMBERS): Löscht aus dem Baum bis zu 25 zufällige Zahlen, welche sich in der NUMBERS Liste befinden.
